@@ -43,7 +43,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedulue(String author, String date) {
+    public List<ScheduleResponseDto> findAllSchedule(String author, String date) {
         LocalDate localDate = null;
 
         if (date != null && !date.isBlank()) {

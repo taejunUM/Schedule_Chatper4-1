@@ -30,7 +30,7 @@ public class ScheduleController {
             @RequestParam(required = false) String author,
             @RequestParam(required = false) String date
     ) {
-        return new ResponseEntity<>(scheduleService.findAllSchedulue(author, date), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.findAllSchedule(author, date), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
