@@ -6,7 +6,9 @@ import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.entity.Schedule;
 import com.example.schedule.entity.User;
 import com.example.schedule.repository.ScheduleRepository;
+import com.example.schedule.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,17 +25,18 @@ import java.util.stream.Collectors;
 public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final HttpSession session;
     private final EntityManager em;
+    private final UserRepository userRepository;
 
 
     @Override
+    // 필터링을 통해 무조건 로그인 한 유저만 이용할 수있는 기능.
     public ScheduleResponseDto addSchedule(ScheduleRequestDto dto) {
-        // 유저생성X 세션에 있는 이메일 또는 id로 유저객체를 불러옴
-        // 그 후 일정생성 할때 유저객체를 같이 넘겨줌.
-        User user = new User("name", "abc@aaa.com", "password");
-        user.setId(1L);
+        String email = (String) session.getAttribute("userEmail");
+        User user = userRepository.findByEmail(email).get();
 
-        Schedule schedule = new Schedule(dto.getAuthor(), dto.getTitle(), dto.getContents(), user);
+        Schedule schedule = new Schedule(dto.getTitle(), dto.getContents(), user);
         Schedule save = scheduleRepository.save(schedule);
 
         return ScheduleResponseDto.toDto(save);
@@ -46,8 +49,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (date != null && !date.isBlank()) {
             localDate = LocalDate.parse(date);
         }
-        List<Schedule> schedules =  scheduleRepository.findAllSchedule(author,localDate);
-        return  schedules.stream()
+        List<Schedule> schedules = scheduleRepository.findAllSchedule(author, localDate);
+        return schedules.stream()
                 .map(ScheduleResponseDto::toDto)
                 .collect(Collectors.toList());
     }
@@ -63,14 +66,14 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleResponseDto modifySchedule(Long id, ScheduleRequestDto dto) {
         Schedule schedule = scheduleRepository.findByIdOrElseThrow(id);
 
-        String author = dto.getAuthor();
         String title = dto.getTitle();
         String contents = dto.getContents();
 
-        schedule.updateSchedule(author, title, contents);
+        schedule.updateSchedule(title, contents);
         em.flush();//메소드가 끝나기전에 커밋함.(변경사항 즉시 반영)
         return ScheduleResponseDto.toDto(schedule);
     }
+
     @Override
     public void deleteSchedule(Long id) {
         Schedule schedule = scheduleRepository.findByIdOrElseThrow(id);
