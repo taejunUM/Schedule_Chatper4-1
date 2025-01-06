@@ -20,6 +20,11 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
+    /**
+     * 일정 생성
+     * @param dto 제목, 내용 입력
+     * @return
+     */
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> addSchedule(@RequestBody ScheduleRequestDto dto) {
         return new ResponseEntity<>(scheduleService.addSchedule(dto), HttpStatus.CREATED);
@@ -27,10 +32,10 @@ public class ScheduleController {
 
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findAllSchedule(
-            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String title,
             @RequestParam(required = false) String date
     ) {
-        return new ResponseEntity<>(scheduleService.findAllSchedulue(author, date), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.findAllSchedule(title, date), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

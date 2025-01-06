@@ -13,9 +13,6 @@ public class Schedule extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String author;
-
-    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false, columnDefinition = "longtext")
@@ -28,15 +25,13 @@ public class Schedule extends BaseEntity {
     public Schedule() {
     }
 
-    public Schedule(String author, String title, String contents, User user) {
-        this.author = author;
+    public Schedule(String title, String contents, User user) {
         this.title = title;
         this.contents = contents;
         this.user = user;
     }
 
-    public void updateSchedule(String author, String title, String contents) {
-        this.author = author;
+    public void updateSchedule(String title, String contents) {
         this.title = title;
         this.contents = contents;
     }

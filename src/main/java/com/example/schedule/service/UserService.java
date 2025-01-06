@@ -1,5 +1,6 @@
 package com.example.schedule.service;
 
+import com.example.schedule.dto.LoginRequestDto;
 import com.example.schedule.dto.UserRequestDto;
 import com.example.schedule.dto.UserResponseDto;
 
@@ -15,4 +16,8 @@ public interface UserService {
     UserResponseDto modifyUser(Long id, UserRequestDto dto);
 
     void deleteUser(Long id);
+
+    void login(LoginRequestDto dto);
+
+    void logout();
 }

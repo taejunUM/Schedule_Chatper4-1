@@ -1,10 +1,14 @@
 package com.example.schedule.service;
 
+import com.example.schedule.dto.LoginRequestDto;
 import com.example.schedule.dto.UserRequestDto;
 import com.example.schedule.dto.UserResponseDto;
 import com.example.schedule.entity.User;
+import com.example.schedule.exception.ErrorCode;
+import com.example.schedule.exception.GlobalException;
 import com.example.schedule.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final EntityManager em;
+    private final HttpSession session;
 
     @Override
     public UserResponseDto addUser(UserRequestDto dto) {
@@ -60,6 +65,24 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findByIdOrElseThrow(id);
         userRepository.delete(user);
+        session.invalidate();
+    }
+
+    @Override
+    public void login(LoginRequestDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+
+        if (!user.getPw().equals(dto.getPw())) {
+            throw new GlobalException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        session.setAttribute("userEmail", dto.getEmail());
+    }
+
+    @Override
+    public void logout() {
+        session.invalidate();
     }
 
 }
