@@ -10,13 +10,10 @@ import com.example.schedule.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,13 +40,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedule(String author, String date) {
+    public List<ScheduleResponseDto> findAllSchedule(String title, String date) {
         LocalDate localDate = null;
 
         if (date != null && !date.isBlank()) {
             localDate = LocalDate.parse(date);
         }
-        List<Schedule> schedules = scheduleRepository.findAllSchedule(author, localDate);
+        List<Schedule> schedules = scheduleRepository.findAllSchedule(title, localDate);
         return schedules.stream()
                 .map(ScheduleResponseDto::toDto)
                 .collect(Collectors.toList());
